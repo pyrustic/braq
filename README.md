@@ -290,6 +290,9 @@ assert braq.get_header(line_2) is None
 <p align="right"><a href="#readme">Back to top</a></p>
 
 # Miscellaneous
+Collection of miscellaneous notes.
+
+## Cover image
 The beautiful cover image is generated with [Carbon](https://carbon.now.sh/about).
 
 <p align="right"><a href="#readme">Back to top</a></p>
