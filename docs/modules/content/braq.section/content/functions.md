@@ -32,18 +32,23 @@ No description
 
 
 ## render
-sections are either Section objects or header-body tuples
-Note that a body is either a text string or a sequence of lines
+Render sections, i.e., transform the sequence of sections
+into a Braq text document (string)
 
 
 
 **Signature:** (\*sections, spacing=1)
 
+|Parameter|Description|
+|---|---|
+|sections|Section objects or header-body tuples. Note that a body is either a text string or a sequence of lines|
+|spacing|number of empty lines between two sections, defaults to 1|
 
 
 
 
-**Return Value:** None
+
+**Return Value:** A string representing a Braq text document
 
 [Back to Top](#module-overview)
 

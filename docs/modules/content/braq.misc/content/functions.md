@@ -16,7 +16,7 @@ No description
 [exhaust\_iterator](#exhaust_iterator)
 
 ## exhaust\_iterator
-No description
+Exhaust an iterator by iterating over it
 
 
 

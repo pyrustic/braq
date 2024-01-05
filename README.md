@@ -42,7 +42,7 @@ A Braq document is made up of **sections**, each defined by a **header** surroun
 
 Instead of interpreting the lines that make sections, the Braq parser lays low and lets the programmer decide what to do with them.
 
-Because of this parsing policy, a single Braq document can contain an **eclectic set of sections** such as a poem, server configs, help text, [prompts](https://github.com/f/awesome-chatgpt-prompts) for a chatbot, [directed graph](https://en.wikipedia.org/wiki/Directed_graph), [ascii artwork](https://en.wikipedia.org/wiki/ASCII_art), and more.
+Because of this parsing policy, a single Braq document can contain an **eclectic set of sections** such as notes, JSON string, help text, server configs, [prompts](https://github.com/f/awesome-chatgpt-prompts) for a chatbot, [directed graph](https://en.wikipedia.org/wiki/Directed_graph), [ascii artwork](https://en.wikipedia.org/wiki/ASCII_art), and more.
 
 > The doc generator used for [Pyrustic](https://pyrustic.github.io) projects consumes docstrings written in Braq.
 
@@ -50,21 +50,27 @@ Because of this parsing policy, a single Braq document can contain an **eclectic
 <p align="right"><a href="#readme">Back to top</a></p>
 
 # Parse a document
-The library exposes the `parse` function which takes as input the text stream to be parsed, then returns a dictionary whose keys and values are strings representing headers and bodies respectively.
+The library exposes the `parse` function which takes as input the text stream to be parsed, then returns a **dictionary** whose keys and values are strings representing headers and bodies respectively.
 
 > Sections sharing the same header are concatenated !
+> The header of an unnamed section is an empty string.
 
 ```python
 import braq
 
 text = """\
-this is the unnamed section
+this is the unnamed section at
+the top of this document...
 
 [section 1]
 this is section 1"""
 
-r = braq.parse(text)
-assert tuple(r.keys()) == ("", "section 1")
+d = braq.parse(text)
+
+# check headers
+assert tuple(d.keys()) == ("", "section 1")
+# check the body of 'section 1'
+assert d["section 1"] == "this is section 1"
 ```
 
 ## Parse a document iteratively

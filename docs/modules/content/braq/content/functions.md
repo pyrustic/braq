@@ -50,10 +50,12 @@ No description
 ## iter\_parse
 Stream is either a text string, a sequence of or an iterator of lines
 Usage:
-    for header, body in parse(stream):
-        print(header)  # string
-        for line in body:  # iterator
-            print(line)
+```
+for header, body in parse(stream):
+    print(header)  # string
+    for line in body:  # iterator
+        print(line)
+```
 Note that stream might be binary text encoded with UTF-8
 
 
@@ -70,18 +72,24 @@ Note that stream might be binary text encoded with UTF-8
 
 
 ## iter\_read
-src is either a path string, a pathlib.Path instance, or a file object.
-Note that the file object might expose binary text encoded with UTF-8
+Iteratively read a file. This generator yields a 2-tuple made
+of a header string and an iterator to iterate over the body line by line.
 
 
 
 **Signature:** (src, end\_of\_stream=None)
 
+|Parameter|Description|
+|---|---|
+|src|is either a path string, a pathlib.Path instance, or a file object which might expose binary text encoded with UTF-8|
+|end\_of\_stream|a character or string to indicate the end of the stream|
 
 
 
 
-**Return Value:** None
+
+**Return Value:** Yields a 2-tuple made of a header string and a body iterator to iterate
+over the body line by line
 
 [Back to Top](#module-overview)
 
@@ -105,46 +113,61 @@ values are section's bodies. a section body is a text string
 
 
 ## read
-read and flatten.
-returns the dict of sections (keys are headers and
-values are section's bodies. a section body is a text string
+Read a file then flatten its contents (concatenate sections with same header).
 
 
 
 **Signature:** (src, end\_of\_stream=None)
 
+|Parameter|Description|
+|---|---|
+|src|is either a path string, a pathlib.Path instance, or a file object which might expose binary text encoded with UTF-8|
+|end\_of\_stream|a character or string to indicate the end of the stream|
 
 
 
 
-**Return Value:** None
+
+**Return Value:** returns the dict of sections where keys are headers and
+values are section's bodies. A section body is a text string
 
 [Back to Top](#module-overview)
 
 
 ## render
-sections are either Section objects or header-body tuples
-Note that a body is either a text string or a sequence of lines
+Render sections, i.e., transform the sequence of sections
+into a Braq text document (string)
 
 
 
 **Signature:** (\*sections, spacing=1)
 
+|Parameter|Description|
+|---|---|
+|sections|Section objects or header-body tuples. Note that a body is either a text string or a sequence of lines|
+|spacing|number of empty lines between two sections, defaults to 1|
 
 
 
 
-**Return Value:** None
+
+**Return Value:** A string representing a Braq text document
 
 [Back to Top](#module-overview)
 
 
 ## write
-No description
+Write to a file
 
 
 
 **Signature:** (\*sections, dest=None, spacing=1)
+
+|Parameter|Description|
+|---|---|
+|\*sections|sections objects or header-body 2-tuples|
+|dest|is either a path string, a pathlib.Path instance|
+|spacing|number of lines between two sections, defaults to 1|
 
 
 

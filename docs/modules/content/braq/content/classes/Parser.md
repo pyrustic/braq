@@ -52,10 +52,12 @@ used to indicate the end of the stream
 ## parse
 Stream is an iterator, a sequence of lines, or a text string
 Usage:
+```
     for header, body in Parser.parse(stream):
         print(header)  # string
         for line in body:  # iterator
             print(line)
+```
 Note that stream might be binary text encoded with UTF-8
 
 

@@ -5,10 +5,12 @@ def iter_parse(stream, end_of_stream=None):
     """
     Stream is either a text string, a sequence of or an iterator of lines
     Usage:
-        for header, body in parse(stream):
-            print(header)  # string
-            for line in body:  # iterator
-                print(line)
+    ```
+    for header, body in parse(stream):
+        print(header)  # string
+        for line in body:  # iterator
+            print(line)
+    ```
     Note that stream might be binary text encoded with UTF-8
     """
     parser = Parser(end_of_stream=end_of_stream)
@@ -27,6 +29,7 @@ def parse(stream, end_of_stream=None):
     for header, body in sections.items():
         sections[header] = "\n".join(body).rstrip()
     return sections
+
 
 class Parser:
 
@@ -50,10 +53,12 @@ class Parser:
         """
         Stream is an iterator, a sequence of lines, or a text string
         Usage:
+        ```
             for header, body in Parser.parse(stream):
                 print(header)  # string
                 for line in body:  # iterator
                     print(line)
+        ```
         Note that stream might be binary text encoded with UTF-8
         """
         self._active = True

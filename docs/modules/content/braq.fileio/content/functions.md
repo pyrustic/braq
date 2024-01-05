@@ -16,46 +16,62 @@ No description
 [iter\_read](#iter_read) &nbsp;&nbsp; [read](#read) &nbsp;&nbsp; [write](#write)
 
 ## iter\_read
-src is either a path string, a pathlib.Path instance, or a file object.
-Note that the file object might expose binary text encoded with UTF-8
+Iteratively read a file. This generator yields a 2-tuple made
+of a header string and an iterator to iterate over the body line by line.
 
 
 
 **Signature:** (src, end\_of\_stream=None)
 
+|Parameter|Description|
+|---|---|
+|src|is either a path string, a pathlib.Path instance, or a file object which might expose binary text encoded with UTF-8|
+|end\_of\_stream|a character or string to indicate the end of the stream|
 
 
 
 
-**Return Value:** None
+
+**Return Value:** Yields a 2-tuple made of a header string and a body iterator to iterate
+over the body line by line
 
 [Back to Top](#module-overview)
 
 
 ## read
-read and flatten.
-returns the dict of sections (keys are headers and
-values are section's bodies. a section body is a text string
+Read a file then flatten its contents (concatenate sections with same header).
 
 
 
 **Signature:** (src, end\_of\_stream=None)
 
+|Parameter|Description|
+|---|---|
+|src|is either a path string, a pathlib.Path instance, or a file object which might expose binary text encoded with UTF-8|
+|end\_of\_stream|a character or string to indicate the end of the stream|
 
 
 
 
-**Return Value:** None
+
+**Return Value:** returns the dict of sections where keys are headers and
+values are section's bodies. A section body is a text string
 
 [Back to Top](#module-overview)
 
 
 ## write
-No description
+Write to a file
 
 
 
 **Signature:** (\*sections, dest=None, spacing=1)
+
+|Parameter|Description|
+|---|---|
+|\*sections|sections objects or header-body 2-tuples|
+|dest|is either a path string, a pathlib.Path instance|
+|spacing|number of lines between two sections, defaults to 1|
 
 
 

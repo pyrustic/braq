@@ -34,8 +34,18 @@ def _ensure_body(body):
     
 
 def render(*sections, spacing=1):
-    """sections are either Section objects or header-body tuples
-    Note that a body is either a text string or a sequence of lines"""
+    """
+    Render sections, i.e., transform the sequence of sections
+    into a Braq text document (string)
+
+    [parameters]
+    - sections: Section objects or header-body tuples.
+    Note that a body is either a text string or a sequence of lines
+    - spacing: number of empty lines between two sections, defaults to 1
+
+    [return]
+    A string representing a Braq text document
+    """
     r = list()
     for i, section in enumerate(sections):
         if isinstance(section, Section):

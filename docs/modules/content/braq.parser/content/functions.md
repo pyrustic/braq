@@ -50,10 +50,12 @@ No description
 ## iter\_parse
 Stream is either a text string, a sequence of or an iterator of lines
 Usage:
-    for header, body in parse(stream):
-        print(header)  # string
-        for line in body:  # iterator
-            print(line)
+```
+for header, body in parse(stream):
+    print(header)  # string
+    for line in body:  # iterator
+        print(line)
+```
 Note that stream might be binary text encoded with UTF-8
 
 
