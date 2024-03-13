@@ -1,28 +1,45 @@
 from braq import misc
 
 
-def iter_parse(stream, end_of_stream=None):
+def parse_iter(stream, end_of_stream=None):
     """
-    Stream is either a text string, a sequence of or an iterator of lines
-    Usage:
-    ```
-    for header, body in parse(stream):
+    Iteratively parse a stream
+
+    [parameters]
+    - stream: either a text string, UTF-8 binary, a sequence of or an iterator of lines
+    - end_of_stream: string representing the end of stream
+
+    [return]
+    Yield header and body for each section until end of stream.
+    The header is a string and the body is an iterator that yield each line (string)
+    of the body.
+
+    [usage]
+    ```python
+    for header, body in parse_iter(stream):
         print(header)  # string
         for line in body:  # iterator
             print(line)
     ```
-    Note that stream might be binary text encoded with UTF-8
     """
     parser = Parser(end_of_stream=end_of_stream)
     yield from parser.parse(stream)
 
 
 def parse(stream, end_of_stream=None):
-    """parse and flatten.
-    returns the dict of sections (keys are headers and
-    values are section's bodies. a section body is a text string"""
+    """
+    Parse and flatten a Braq text stream
+
+    [parameters]
+    - stream: either a text string, UTF-8 binary, a sequence of or an iterator of lines
+    - end_of_stream: string representing the end of stream
+
+    [return]
+    Returns the dict of sections (keys are headers and
+    values are section's bodies. a section body is a text string
+    """
     sections = dict()
-    for header, body in iter_parse(stream, end_of_stream=end_of_stream):
+    for header, body in parse_iter(stream, end_of_stream=end_of_stream):
         if header not in sections:
             sections[header] = list()
         sections[header].extend(body)
@@ -51,15 +68,23 @@ class Parser:
 
     def parse(self, stream):
         """
-        Stream is an iterator, a sequence of lines, or a text string
-        Usage:
+        Iteratively parse a stream
+
+        [parameters]
+        - stream: iterator, sequence of lines, text string or UTF-8 encoded binary
+
+        [return]
+        Yield header and body for each section until end of stream.
+        The header is a string and the body is an iterator that yield each line (string)
+        of the body.
+
+        [usage]
+        ```python
+        for header, body in Parser.parse(stream):
+            print(header)  # string
+            for line in body:  # iterator
+                print(line)
         ```
-            for header, body in Parser.parse(stream):
-                print(header)  # string
-                for line in body:  # iterator
-                    print(line)
-        ```
-        Note that stream might be binary text encoded with UTF-8
         """
         self._active = True
         stream = self._ensure_stream(stream)
@@ -116,6 +141,7 @@ class Parser:
 
 
 def check_header(line):
+    """Return a boolean to tell whether a string is a header line or not"""
     if not line.startswith("["):
         return False
     if line.rstrip().endswith("]"):
@@ -124,8 +150,9 @@ def check_header(line):
 
 
 def get_header(line):
+    """Extract and return the header from a line string"""
     if not line.startswith("["):
-        return None
+        return
     line = line.rstrip()
     if line.endswith("]"):
         return line[1:-1]

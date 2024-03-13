@@ -1,7 +1,15 @@
 
 
 class Section:
+
     def __init__(self, header, body=None):
+        """
+        Init
+
+        [parameters]
+        - header: the header (str) of the section
+        - body: the body of the section, either a string or a list of string (lines)
+        """
         self._header = header
         self._body = _ensure_body(body)
 
@@ -15,22 +23,31 @@ class Section:
 
     @property
     def body(self):
+        """Body as string"""
         return self._body
 
     @body.setter
     def body(self, val):
+        """Set the body (string or a list of strings representing lines)"""
         self._body = _ensure_body(val)
 
     def __str__(self):
+        """A section object can be rendered"""
         return render(self)
+
+    def __iter__(self):
+        """A section object can be expanded into two items, the header, and the string body"""
+        yield self._header
+        yield self._body
 
 
 def _ensure_body(body):
+    """Convert non-string body into a string"""
     if not body:
         return ""
     if isinstance(body, str):
-        return body
-    return "\n".join(body)
+        return body.rstrip()
+    return "\n".join(body).rstrip()
     
 
 def render(*sections, spacing=1):
@@ -54,7 +71,7 @@ def render(*sections, spacing=1):
         if header or (header == "" and i != 0):
             r.append("[" + header + "]")
         if isinstance(body, str):
-            body = body.splitlines()
+            body = body.splitlines(keepends=False)
         if body:
             r.extend(body)
         if i < len(sections) - 1:
