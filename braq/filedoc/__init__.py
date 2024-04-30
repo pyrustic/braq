@@ -6,6 +6,9 @@ from braq.document import Document
 from paradict import CONFIG_MODE
 
 
+__all__ = ["FileDoc"]
+
+
 class FileDoc(Document):
     """File-based Braq document"""
     def __init__(self, path, *, autosave=True, schema=None,
@@ -15,7 +18,7 @@ class FileDoc(Document):
         """
         Init
 
-        [parameters]
+        [param]
         - path: path string or a pathlib.Path instance
         - autosave: bool to tell whether data should be saved to disk right after modification
         - schema: a Python dict that serves as schema to validate the sections
@@ -74,7 +77,7 @@ class FileDoc(Document):
         """
         Decode and return the section whose header is provided
 
-        [parameters]
+        [param]
         - header: the string header of the section
         - skip_comments: boolean to tell whether comments should be ignored or not
         """
@@ -121,7 +124,7 @@ class FileDoc(Document):
         Render the entire document or a specific set of sections, i.e.,
         return a textual Paradict string that may be stored in a file.
 
-        [parameters]
+        [param]
         - *headers: Headers of sections to render.
         Omitting this will render the entire document
 

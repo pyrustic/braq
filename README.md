@@ -314,7 +314,7 @@ document.validate("user", "server")  # returns a bool
 > There is more to discover about the `Document` class, such as the `clear`, `remove`, and `render` methods, exposed properties, and more.
 
 
-> Check out the documentation for `braq.Document` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.Document` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/class-Document.md).
 
 
 ## File document class
@@ -352,7 +352,7 @@ with confile.edit_model():  # by default, autosave==True
 
 > There is more to discover about the **FileDoc** class, such as the `load`, `save`, and `save_to` methods, exposed properties, and more.
 
-> Check out the documentation for `braq.FileDoc` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.FileDoc` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/class-FileDoc.md).
 
 <p align="right"><a href="#readme">Back to top</a></p>
 
@@ -406,7 +406,7 @@ assert tuple(d.keys()) == ("", "section 1")
 assert d["section 1"] == "this is section 1"
 ```
 
-> Check out the documentation for `braq.parse` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.parse` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#parse).
 
 ## Parse a document iteratively
 A document can be parsed line by line as following:
@@ -437,7 +437,7 @@ this is section 1
 ```
 
 
-> Check out the documentation for `braq.parse_iter` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.parse_iter` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#parse_iter).
 
 ## Read a file
 The library exposes the `read` function which takes as input the path to a file to parse, then returns a dictionary whose keys and values are strings representing headers and bodies respectively.
@@ -453,7 +453,7 @@ r = braq.read(path)
 assert tuple(r.keys()) == ("", "section 1")
 ```
 
-> Check out the documentation for `braq.read` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.read` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#read).
 
 ## Read a file iteratively
 A large text file can be parsed line by line as following:
@@ -478,7 +478,7 @@ this is the unnamed section
 this is section 1
 ```
 
-> Check out the documentation for `braq.read_iter` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.read_iter` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#read_iter).
 
 ## Render a document
 Rendering a document involves transforming Python objects representing sections into Braq text which is a string that can be displayed on the screen or stored in a file.
@@ -518,7 +518,7 @@ line f
 > The `render` function also accepts the `spacing` argument which defaults to 1 and represents the number of lines of spacing between two adjacent sections.
 
 
-> Check out the documentation for `braq.render` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.render` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#render).
 
 ## Write to file
 Following is a snippet for writting a Braq document to a file:
@@ -548,7 +548,7 @@ line b
 ```
 
 
-> Check out the documentation for `braq.write` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.write` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#write).
 
 
 <p align="right"><a href="#readme">Back to top</a></p>
@@ -617,7 +617,7 @@ assert braq.get_header(line_1) == "my header"
 assert braq.get_header(line_2) is None
 ```
 
-> Check out the documentation for `braq.check_header` and `braq.get_header` [here](https://github.com/pyrustic/braq/blob/master/docs/README.md).
+> Check out the API reference for `braq.check_header` and `braq.get_header` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#check_header).
 
 <p align="right"><a href="#readme">Back to top</a></p>
 

@@ -1,4 +1,6 @@
 
+__all__ = ["Section", "render"]
+
 
 class Section:
 
@@ -6,7 +8,7 @@ class Section:
         """
         Init
 
-        [parameters]
+        [param]
         - header: the header (str) of the section
         - body: the body of the section, either a string or a list of string (lines)
         """
@@ -55,7 +57,7 @@ def render(*sections, spacing=1):
     Render sections, i.e., transform the sequence of sections
     into a Braq text document (string)
 
-    [parameters]
+    [param]
     - sections: Section objects or header-body tuples.
     Note that a body is either a text string or a sequence of lines
     - spacing: number of empty lines between two sections, defaults to 1

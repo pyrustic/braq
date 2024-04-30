@@ -4,12 +4,15 @@ from braq.section import render
 from braq.parser import parse_iter
 
 
+__all__ = ["read_iter", "read", "write"]
+
+
 def read_iter(filename, end_of_stream=None):
     """
     Iteratively read a file. This generator yields a 2-tuple made
     of a header string and an iterator to iterate over the body line by line.
 
-    [parameters]
+    [param]
     - filename: is either a path string, a pathlib.Path instance, or a file object which
     might expose binary text encoded with UTF-8
     - end_of_stream: string to indicate the end of the stream
@@ -39,7 +42,7 @@ def read(filename, end_of_stream=None):
     """
     Read a file then flatten its contents (concatenate sections with same header).
 
-    [parameters]
+    [param]
     - filename: is either a path string, a pathlib.Path instance, or a file object which
     might expose binary text encoded with UTF-8
     - end_of_stream: string to indicate the end of the stream
@@ -61,7 +64,7 @@ def write(*sections, dst=None, spacing=1):
     """
     Write to a file
 
-    [parameters]
+    [param]
     - *sections: sections objects or header-body 2-tuples
     - dst: is either a path string, a pathlib.Path instance
     - spacing: number of lines between two sections, defaults to 1

@@ -1,11 +1,14 @@
 from braq import misc
 
 
+__all__ = ["parse_iter", "parse", "Parser", "check_header", "get_header"]
+
+
 def parse_iter(stream, end_of_stream=None):
     """
     Iteratively parse a stream
 
-    [parameters]
+    [param]
     - stream: either a text string, UTF-8 binary, a sequence of or an iterator of lines
     - end_of_stream: string representing the end of stream
 
@@ -30,7 +33,7 @@ def parse(stream, end_of_stream=None):
     """
     Parse and flatten a Braq text stream
 
-    [parameters]
+    [param]
     - stream: either a text string, UTF-8 binary, a sequence of or an iterator of lines
     - end_of_stream: string representing the end of stream
 
@@ -70,7 +73,7 @@ class Parser:
         """
         Iteratively parse a stream
 
-        [parameters]
+        [param]
         - stream: iterator, sequence of lines, text string or UTF-8 encoded binary
 
         [return]

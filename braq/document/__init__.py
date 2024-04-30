@@ -5,6 +5,9 @@ import braq
 from braq import errors
 
 
+__all__ = ["Document"]
+
+
 class Document:
     """This class represents an editable model of a Braq document"""
     def __init__(self, init_text="", *, schema=None,
@@ -13,7 +16,7 @@ class Document:
         """
         Init
 
-        [parameters]
+        [param]
         - init_text: Braq text for initializing the model
         - schema: a Python dict that serves as schema to validate the sections
         of the document. It is a dictionary of dictionaries, with root keys
@@ -76,7 +79,7 @@ class Document:
         """
         Get the textual body of the section whose header is provided
 
-        [parameters]
+        [param]
         - header: the header (str) of the section
 
         [return]
@@ -88,7 +91,7 @@ class Document:
         """
         Get the body lines of the section whose header is provided
 
-        [parameters]
+        [param]
         - header: the header (str) of the section
 
         [return]
@@ -103,7 +106,7 @@ class Document:
         """
         Create or update a section by providing its header and the body
 
-        [parameters]
+        [param]
         - header: the header (str) of the section
         - body: the body of the section, either a string or a list of string (lines)
 
@@ -119,7 +122,7 @@ class Document:
         """
         Decode and return the section whose header is provided
 
-        [parameters]
+        [param]
         - header: the string header of the section
         - skip_comments: boolean to tell whether comments should be ignored or not
 
@@ -137,7 +140,7 @@ class Document:
     def build_config(self, *headers, skip_comments=True, on_error=None):
         """Build a configuration dictionary from the document and return it
 
-        [parameters]
+        [param]
         - *headers: Headers of sections meant to be part of the config.
         Not providing headers implies that the entire document can be treated as config data
         - skip_comments: boolean to tell whether comments should be ignored or not
@@ -185,7 +188,7 @@ class Document:
         Render the entire document or a specific set of sections, i.e.,
         return a textual Paradict string that may be stored in a file.
 
-        [parameters]
+        [param]
         - *headers: Headers of sections to render.
         Omitting this will render the entire document
 
@@ -210,7 +213,7 @@ class Document:
         """
         Load a schema file
 
-        [parameters]
+        [param]
         - src: either a path, a pathlib.Path object, or a file like object
         """
         r = braq.read(src)
@@ -224,7 +227,7 @@ class Document:
         """
         Validate this entire document or only specific section(s)
 
-        [parameters]
+        [param]
         - *headers: headers to validate. If you ignore this parameter, the entire document will
         be checked against the schema.
 
@@ -255,7 +258,7 @@ class Document:
         """
         Save the contents of this document to a specific file
 
-        [parameters]
+        [param]
         - path: path to filename. Path may be a pathlib.Path instance
         """
         if not path:
@@ -270,7 +273,7 @@ class Document:
         """
         Remove specific section(s) from this document
 
-        [parameters]
+        [param]
         - *headers: the headers of the sections to remove
         """
         for header in headers:
