@@ -14,8 +14,6 @@
 # Braq
 <b>Customizable data format for config files, AI prompts, and more</b>
 
-This project is part of the [Pyrustic Open Ecosystem](https://pyrustic.github.io).
-
 
 ## Table of contents
 - [Overview](#overview)
