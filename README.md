@@ -247,7 +247,7 @@ def add(a, b):
     This function adds together the values of 
     the provided arguments.
     
-    [params]
+    [param]
     - a: first integer
     - b: second integer
     
@@ -257,7 +257,7 @@ def add(a, b):
     return a + b
 ```
 
-> A tool to consume [docstrings](https://en.wikipedia.org/wiki/Docstring) and output browsable Markdown documents is in development.
+> [MikeDoc](https://github.com/pyrustic/mikedoc) is a docstring format for generating API references. The library uses **Braq** to parse [docstrings](https://en.wikipedia.org/wiki/Docstring).
 
 <p align="right"><a href="#readme">Back to top</a></p>
 
