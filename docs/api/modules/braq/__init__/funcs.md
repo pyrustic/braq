@@ -6,7 +6,9 @@
 
 Here are functions exposed in the module:
 - [check\_header](#check_header)
+- [dump\_config](#dump_config)
 - [get\_header](#get_header)
+- [load\_config](#load_config)
 - [parse](#parse)
 - [parse\_iter](#parse_iter)
 - [read](#read)
@@ -24,11 +26,32 @@ def check_header(line):
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 
+## dump\_config
+Dump a dict to a config file. It will override the dest path.
+The data should be a dict whose keys are header strings and values are dicts
+
+```python
+def dump_config(data, path, *, type_ref=None, spacing=1, encoding_mode='c', bin_to_text=False, skip_comments=False, root_dir=None, attachments_dir='attachments'):
+    ...
+```
+
+<p align="right"><a href="#braq-api-reference">Back to top</a></p>
+
 ## get\_header
 Extract and return the header from a line string
 
 ```python
 def get_header(line):
+    ...
+```
+
+<p align="right"><a href="#braq-api-reference">Back to top</a></p>
+
+## load\_config
+Load a config file as a dict whose keys are headers and values are dicts
+
+```python
+def load_config(path, *, type_ref=None, obj_builder=None, skip_comments=True, root_dir=None, attachments_dir='attachments'):
     ...
 ```
 
@@ -117,7 +140,7 @@ Render sections, i.e., transform the sequence of sections
 into a Braq text document (string)
 
 ```python
-def render(*sections, spacing=1):
+def render(sections, spacing=1):
     ...
 ```
 
@@ -135,7 +158,7 @@ A string representing a Braq text document
 Write to a file
 
 ```python
-def write(*sections, dst=None, spacing=1):
+def write(sections, dst=None, spacing=1):
     ...
 ```
 

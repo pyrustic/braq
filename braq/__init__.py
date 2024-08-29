@@ -5,9 +5,10 @@ from braq.fileio import read_iter, read, write
 from braq.section import Section, render
 from braq.document import Document
 from braq.filedoc import FileDoc
+from braq.configfile import load_config, dump_config
 
 
 __all__ = ["Document", "FileDoc", "parse_iter", "parse", "render",
-           "read_iter", "read", "write",
+           "read_iter", "read", "write", "load_config", "dump_config",
            "Section", "Parser", "TypeRef",
            "check_header", "get_header", "DATA_MODE", "CONFIG_MODE"]

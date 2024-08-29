@@ -52,7 +52,7 @@ over the body line by line
 Write to a file
 
 ```python
-def write(*sections, dst=None, spacing=1):
+def write(sections, dst=None, spacing=1):
     ...
 ```
 

@@ -124,8 +124,8 @@ Being able to embed a dictionary data structure in a section makes Braq de facto
 
 **Example of a Braq config file:**
 ```
-This is the unnamed section of 'my-config.braq' file.
-This section will serve as HELP text.
+# This is the unnamed section of 'my-config.braq' file.
+# This section will serve as HELP text.
 
 [user]
 id = 42
@@ -136,7 +136,28 @@ theme = 'dark'
 window-size = '1024x420'
 ```
 
-**Example of code snippet to consume the config file:**
+**Using functions to consume and create config files:**
+```python
+from braq import load_config, dump_config
+
+config = load_config("my-config.braq")
+
+# get the 'user' dict section
+user = config["user"]
+
+# test
+assert user == {"id": 42, "name": "alex"}
+
+# embed a 'server' dict section in the config file then dump the config 
+config["server"] = {"ip-address": "127.0.0.1", "port": 80}
+dump_config(config, "my-config.braq")  # persisted
+```
+
+> Note that `load_config` and `dump_config` should be used only when the target 
+> filename is a config file that contains exclusively dict sections.
+> For other files, use the `FileDoc` class
+
+**Using the FileDoc class to consume the config file:**
 
 ```python
 from braq import FileDoc
@@ -158,15 +179,6 @@ text = confile.get("user")
 # embed a 'server' dict section in the config file
 server_conf = {"ip-address": "127.0.0.1", "port": 80}
 confile.embed("server", server_conf)  # change persisted
-
-# batch edit mode (changes are persisted at the end)
-with confile.edit_model():  # by default, autosave==True
-    # perform several changes here !
-    # ...
-    confile.embed("gui", {"background": "red", 
-                          "size": 42})
-    confile.remove("server")
-    # ...
 ```
 
 > A schema can be passed to a `FileDoc` instance to validate dict sections.
@@ -304,7 +316,7 @@ assert document.list_headers() == ("", "user", "server")
 
 # validate specific dict sections
 # (no args implies that the entire doc will be the target)
-document.validate("user", "server")  # returns a bool
+document.is_valid("user", "server")  # returns a bool
 # beware, the 'validate' method may raise an exception
 # for good reasons !
 ```
@@ -340,12 +352,6 @@ text = confile.get("user")
 # embed a 'server' dict section
 server_conf = {"ip-address": "127.0.0.1", "port": 80}
 confile.embed("server", server_conf)  # change persisted
-
-# batch edit mode (changes are persisted at the end)
-with confile.edit_model():  # by default, autosave==True
-    # perform several changes here !
-    # ...
-    confile.embed("gui", {"color": "blue"})
 ```
 
 > There is more to discover about the **FileDoc** class, such as the `load`, `save`, and `save_to` methods, exposed properties, and more.
@@ -532,7 +538,8 @@ section_3 = "section 3", ("line a", "line b")
 # path to file
 path = "/home/alex/braqfile.txt"
 # write to file
-r = braq.write(section_1, section_2, section_3, dest=path)
+sections = (section_1, section_2, section_3)
+r = braq.write(sections, path)
 ```
 The contents of the Braq file:
 ```text
@@ -584,7 +591,7 @@ SCHEMA = {"user": {"id": "int",
                      "port": Spec("int", lambda x: 0 < x < 65535)}}
 
 doc = Document(TEXT, schema=SCHEMA)
-assert doc.validate()
+assert doc.is_valid()
 # beware, the validate function returns a bool
 # but it can also raises an exception when something is wrong 
 ```

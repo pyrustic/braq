@@ -15,8 +15,11 @@ Here are properties exposed in the class:
 
 | Property | Methods | Description |
 | --- | --- | --- |
+| attachments\_dir | _getter, setter_ | No docstring. |
+| bin\_to\_text | _getter, setter_ | No docstring. |
 | encoding\_mode | _getter, setter_ | No docstring. |
 | obj\_builder | _getter, setter_ | No docstring. |
+| root\_dir | _getter, setter_ | No docstring. |
 | schema | _getter, setter_ | No docstring. |
 | spacing | _getter, setter_ | No docstring. |
 | type\_ref | _getter, setter_ | No docstring. |
@@ -32,6 +35,7 @@ Here are methods exposed in the class:
 - [embed](#embed)
 - [get](#get)
 - [get\_lines](#get_lines)
+- [is\_valid](#is_valid)
 - [list\_headers](#list_headers)
 - [load\_from](#load_from)
 - [load\_schema](#load_schema)
@@ -45,7 +49,7 @@ Here are methods exposed in the class:
 Init
 
 ```python
-def __init__(self, init_text='', *, schema=None, type_ref=None, obj_builder=None, spacing=1, encoding_mode='c'):
+def __init__(self, init_text='', *, schema=None, type_ref=None, obj_builder=None, spacing=1, encoding_mode='c', bin_to_text=True, root_dir=None, attachments_dir='attachments'):
     ...
 ```
 
@@ -57,6 +61,9 @@ def __init__(self, init_text='', *, schema=None, type_ref=None, obj_builder=None
 | obj\_builder | function that accepts a paradict.box.Obj container and returns a fresh new Python object |
 | spacing | number of blank lines to place between two adjacent sections |
 | encoding\_mode | either "d" (paradict.DATA_MODE) or "c" (paradict.CONFIG_MODE) to indicate if Python dicts should be encoded in the data or config mode. By default, a document's encoding mode is set to paradict.CONFIG_MODE |
+| bin\_to\_text | boolean to text whether Paradict binary values should be converted into base16 strings or stored as attachments |
+| root\_dir | root directory in which the attachments folder is expected to be |
+| attachments\_dir | directory in which attachments should be saved. This is a path that is relative to the root directory. Only slashes are allowed as separator. |
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 
@@ -82,15 +89,14 @@ Return the body as a Python dictionary built with Paradict
 Build a configuration dictionary from the document and return it
 
 ```python
-def build_config(self, *headers, skip_comments=True, on_error=None):
+def build_config(self, *headers, skip_comments=True):
     ...
 ```
 
 | Parameter | Description |
 | --- | --- |
-| \*headers | Headers of sections meant to be part of the config. Not providing headers implies that the entire document can be treated as config data |
+| headers | Headers of sections meant to be part of the config. Not providing headers implies that the entire document can be treated as config data |
 | skip\_comments | boolean to tell whether comments should be ignored or not |
-| on\_error | callback called when an exception is raised while converting a section into a dict with Paradict. The callback must accept two arguments which are the header and the exception object |
 
 ### Value to return
 Returns a dictionary whose keys are headers and values are dictionaries representing the Paradict-compatible bodies of sections. The value is None when the body failed to be converted into dictionary with Paradict
@@ -152,6 +158,25 @@ Return a list of strings or None if this section doesn't exist
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 
+## is\_valid
+Validate this entire document or only specific section(s).
+Note that if the schema is missing or the schema isn't a dictionary,
+a ValidationError will be raised
+
+```python
+def is_valid(self, *headers):
+    ...
+```
+
+| Parameter | Description |
+| --- | --- |
+| \*headers | headers to validate. If you ignore this parameter, the entire document will be checked against the schema. |
+
+### Value to return
+Return true if the document is valid. Raise an exception if the schema is missing
+
+<p align="right"><a href="#braq-api-reference">Back to top</a></p>
+
 ## list\_headers
 Return the ordered list (a 'tuple' to be precise)
 of section's headers (strings)
@@ -165,7 +190,8 @@ def list_headers(self):
 
 ## load\_from
 Load the document from a file by providing
-a path string or pathlib.Path object
+a path string or pathlib.Path object.
+Note that this will override previous contents in the document
 
 ```python
 def load_from(self, path):
@@ -192,7 +218,7 @@ def load_schema(self, src):
 Remove specific section(s) from this document
 
 ```python
-def remove(self, *headers):
+def remove(self, headers):
     ...
 ```
 
@@ -254,7 +280,8 @@ Return the body as a string
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 
 ## validate
-Validate this entire document or only specific section(s)
+Validate this entire document or only specific section(s).
+Might raise a ValidationError
 
 ```python
 def validate(self, *headers):
@@ -265,7 +292,11 @@ def validate(self, *headers):
 | --- | --- |
 | \*headers | headers to validate. If you ignore this parameter, the entire document will be checked against the schema. |
 
-### Value to return
-Return true if the document is valid. Raise an exception if the schema is missing
+### Exceptions table
+ValidationError
+
+| Exception | Circumstance |
+| --- | --- |
+
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>

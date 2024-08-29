@@ -60,7 +60,7 @@ def read(filename, end_of_stream=None):
     return sections
 
 
-def write(*sections, dst=None, spacing=1):
+def write(sections, dst=None, spacing=1):
     """
     Write to a file
 
@@ -69,5 +69,5 @@ def write(*sections, dst=None, spacing=1):
     - dst: is either a path string, a pathlib.Path instance
     - spacing: number of lines between two sections, defaults to 1
     """
-    r = render(*sections, spacing=spacing)
+    r = render(sections, spacing=spacing)
     written.write(r, dst)

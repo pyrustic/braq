@@ -35,7 +35,7 @@ class Section:
 
     def __str__(self):
         """A section object can be rendered"""
-        return render(self)
+        return render((self, ))
 
     def __iter__(self):
         """A section object can be expanded into two items, the header, and the string body"""
@@ -52,7 +52,7 @@ def _ensure_body(body):
     return "\n".join(body).rstrip()
     
 
-def render(*sections, spacing=1):
+def render(sections, spacing=1):
     """
     Render sections, i.e., transform the sequence of sections
     into a Braq text document (string)

@@ -5,6 +5,10 @@ Here are modules that make up [Braq](/README.md):
 <br>
 No docstring.
 
+[braq.configfile.\_\_init\_\_](/docs/api/modules/braq/configfile/__init__/README.md)
+<br>
+load_config and dump_config for Braq documents only containing config
+
 [braq.document.\_\_init\_\_](/docs/api/modules/braq/document/__init__/README.md)
 <br>
 Braq Document class

@@ -18,6 +18,8 @@ class TestImports(unittest.TestCase):
             from braq import read
             from braq import read_iter
             from braq import write
+            from braq import load_config
+            from braq import dump_config
             from braq import check_header
             from braq import get_header
         except ImportError:

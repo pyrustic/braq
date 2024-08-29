@@ -15,11 +15,13 @@ Here are properties exposed in the class:
 
 | Property | Methods | Description |
 | --- | --- | --- |
+| attachments\_dir | _getter, setter_ | No docstring. |
 | autosave | _getter, setter_ | No docstring. |
+| bin\_to\_text | _getter, setter_ | No docstring. |
 | encoding\_mode | _getter, setter_ | No docstring. |
-| lazy\_loading | _getter_ | No docstring. |
 | obj\_builder | _getter, setter_ | No docstring. |
 | path | _getter_ | No docstring. |
+| root\_dir | _getter, setter_ | No docstring. |
 | schema | _getter, setter_ | No docstring. |
 | spacing | _getter, setter_ | No docstring. |
 | type\_ref | _getter, setter_ | No docstring. |
@@ -32,10 +34,10 @@ Here are methods exposed in the class:
 - [build](#build)
 - [build\_config](#build_config)
 - [clear](#clear)
-- [edit\_model](#edit_model)
 - [embed](#embed)
 - [get](#get)
 - [get\_lines](#get_lines)
+- [is\_valid](#is_valid)
 - [list\_headers](#list_headers)
 - [load](#load)
 - [load\_from](#load_from)
@@ -52,7 +54,7 @@ Here are methods exposed in the class:
 Init
 
 ```python
-def __init__(self, path, *, autosave=True, schema=None, type_ref=None, obj_builder=None, lazy_loading=True, spacing=1, encoding_mode='c'):
+def __init__(self, path, *, autosave=True, schema=None, type_ref=None, obj_builder=None, spacing=1, encoding_mode='c', bin_to_text=False, root_dir=None, attachments_dir='attachments'):
     ...
 ```
 
@@ -63,7 +65,6 @@ def __init__(self, path, *, autosave=True, schema=None, type_ref=None, obj_build
 | schema | a Python dict that serves as schema to validate the sections of the document. It is a dictionary of dictionaries, with root keys representing a section header. |
 | type\_ref | optional TypeRef object |
 | obj\_builder | function that accepts a paradict.box.Obj container and returns a fresh new Python object |
-| lazy\_loading | boolean to tell whether the model should be built right at the initialization of the object or when it is needed. |
 | spacing | number of blank lines to place between two adjacent sections |
 | encoding\_mode | either "d" or "c", to indicate if Python dicts should be encoded with the paradict.DATA_MODE or paradict.CONFIG_MODE. By default, a document's encoding mode is set to paradict.CONFI_MODE |
 
@@ -88,15 +89,14 @@ def build(self, header, skip_comments=True):
 Build a configuration dictionary from the document and return it
 
 ```python
-def build_config(self, *headers, skip_comments=True, on_error=None):
+def build_config(self, *headers, skip_comments=True):
     ...
 ```
 
 | Parameter | Description |
 | --- | --- |
-| \*headers | Headers of sections meant to be part of the config. Not providing headers implies that the entire document can be treated as config data |
+| headers | Headers of sections meant to be part of the config. Not providing headers implies that the entire document can be treated as config data |
 | skip\_comments | boolean to tell whether comments should be ignored or not |
-| on\_error | callback called when an exception is raised while converting a section into a dict with Paradict. The callback must accept two arguments which are the header and the exception object |
 
 ### Value to return
 Returns a dictionary whose keys are headers and values are dictionaries representing the Paradict-compatible bodies of sections. The value is None when the body failed to be converted into dictionary with Paradict
@@ -108,18 +108,6 @@ Clear the entire document
 
 ```python
 def clear(self):
-    ...
-```
-
-<p align="right"><a href="#braq-api-reference">Back to top</a></p>
-
-## edit\_model
-Context manager to edit the model of the document and save to disk only at the end
-of the context. Note that when the autosave argument is set to False, the model
-isn't saved at the end of the context
-
-```python
-def edit_model(self, autosave=True):
     ...
 ```
 
@@ -170,6 +158,25 @@ Return a list of strings or None if this section doesn't exist
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 
+## is\_valid
+Validate this entire document or only specific section(s).
+Note that if the schema is missing or the schema isn't a dictionary,
+a ValidationError will be raised
+
+```python
+def is_valid(self, *headers):
+    ...
+```
+
+| Parameter | Description |
+| --- | --- |
+| \*headers | headers to validate. If you ignore this parameter, the entire document will be checked against the schema. |
+
+### Value to return
+Return true if the document is valid. Raise an exception if the schema is missing
+
+<p align="right"><a href="#braq-api-reference">Back to top</a></p>
+
 ## list\_headers
 Return the ordered list (a 'tuple' to be precise)
 of section's headers (strings)
@@ -193,7 +200,8 @@ def load(self):
 
 ## load\_from
 Load the document from a file by providing
-a path string or pathlib.Path object
+a path string or pathlib.Path object.
+Note that this will override previous contents in the document
 
 ```python
 def load_from(self, path):
@@ -220,7 +228,7 @@ def load_schema(self, src):
 remove specific sections from both the document model and the linked file
 
 ```python
-def remove(self, *headers):
+def remove(self, headers):
     ...
 ```
 
@@ -286,7 +294,8 @@ Return the body as a string
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 
 ## validate
-Validate this entire document or only specific section(s)
+Validate this entire document or only specific section(s).
+Might raise a ValidationError
 
 ```python
 def validate(self, *headers):
@@ -297,8 +306,12 @@ def validate(self, *headers):
 | --- | --- |
 | \*headers | headers to validate. If you ignore this parameter, the entire document will be checked against the schema. |
 
-### Value to return
-Return true if the document is valid. Raise an exception if the schema is missing
+### Exceptions table
+ValidationError
+
+| Exception | Circumstance |
+| --- | --- |
+
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
 

@@ -13,8 +13,9 @@ class FileDoc(Document):
     """File-based Braq document"""
     def __init__(self, path, *, autosave=True, schema=None,
                  type_ref=None, obj_builder=None,
-                 lazy_loading=True, spacing=1,
-                 encoding_mode=CONFIG_MODE):
+                 spacing=1, encoding_mode=CONFIG_MODE,
+                 bin_to_text=False, root_dir=None,
+                 attachments_dir="attachments"):
         """
         Init
 
@@ -27,7 +28,6 @@ class FileDoc(Document):
         - type_ref: optional TypeRef object
         - obj_builder: function that accepts a paradict.box.Obj container and
         returns a fresh new Python object
-        - lazy_loading: boolean to tell whether the model should be built right at the initialization of the object or when it is needed.
         - spacing: number of blank lines to place between two adjacent sections
         - encoding_mode: either "d" or "c", to indicate if Python dicts should be
         encoded with the paradict.DATA_MODE or paradict.CONFIG_MODE. By default,
@@ -35,13 +35,12 @@ class FileDoc(Document):
         """
         super().__init__(schema=schema, type_ref=type_ref,
                          obj_builder=obj_builder, spacing=spacing,
-                         encoding_mode=encoding_mode)
+                         encoding_mode=encoding_mode,
+                         bin_to_text=bin_to_text, root_dir=root_dir,
+                         attachments_dir=attachments_dir)
         self._sections = None
         self._path = path
         self._autosave = autosave
-        self._lazy_loading = lazy_loading
-        if lazy_loading:
-            self.load()
 
     @property
     def path(self):
@@ -54,10 +53,6 @@ class FileDoc(Document):
     @autosave.setter
     def autosave(self, val):
         self._autosave = val
-
-    @property
-    def lazy_loading(self):
-        return self._lazy_loading
 
     def get(self, header):
         self._ensure_sections()
@@ -84,10 +79,9 @@ class FileDoc(Document):
         self._ensure_sections()
         return super().build(header, skip_comments=skip_comments)
 
-    def build_config(self, *headers, skip_comments=True, on_error=None):
+    def build_config(self, *headers, skip_comments=True):
         self._ensure_sections()
-        return super().build_config(*headers, skip_comments=skip_comments,
-                                    on_error=on_error)
+        return super().build_config(*headers, skip_comments=skip_comments)
 
     def embed(self, header, body):
         self._ensure_sections()
@@ -95,21 +89,6 @@ class FileDoc(Document):
         if self._autosave:
             self.save()
         return r
-
-    @contextmanager
-    def edit_model(self, autosave=True):
-        """
-        Context manager to edit the model of the document and save to disk only at the end
-        of the context. Note that when the autosave argument is set to False, the model
-        isn't saved at the end of the context
-        """
-        self._ensure_sections()
-        cached_global_autosave = self._autosave
-        self._autosave = False
-        yield
-        self._autosave = cached_global_autosave
-        if autosave:
-            self.save()
 
     def list_headers(self):
         """
@@ -142,10 +121,10 @@ class FileDoc(Document):
         self._ensure_sections()
         return super().save_to(path)
 
-    def remove(self, *headers):
+    def remove(self, headers):
         """remove specific sections from both the document model and the linked file"""
         self._ensure_sections()
-        super().remove(*headers)
+        super().remove(headers)
         if self._autosave:
             self.save()
 
@@ -164,7 +143,7 @@ class FileDoc(Document):
         s = list()
         for header, body in self._sections.items():
             s.append((header, body))
-        braq.write(*s, dst=self._path, spacing=self._spacing)
+        braq.write(s, dst=self._path, spacing=self._spacing)
         return True
 
     def clear(self):

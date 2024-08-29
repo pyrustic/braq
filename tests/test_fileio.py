@@ -75,19 +75,22 @@ class TestWriteFunction(unittest.TestCase):
         pathlib.Path(self._filename).unlink()
 
     def test_with_no_sections(self):
-        write(dst=self._filename)
+        sections = tuple()
+        write(sections, dst=self._filename)
         with open(self._filename, "r", encoding="utf-8") as file:
             r = file.read()
         self.assertEqual("", r)
 
     def test_with_sections(self):
-        write(SECTION_0, SECTION_1, SECTION_2, dst=self._filename)
+        sections = (SECTION_0, SECTION_1, SECTION_2)
+        write(sections, dst=self._filename)
         with open(self._filename, "r", encoding="utf-8") as file:
             r = file.read()
         self.assertEqual(TEXT_1, r)
 
     def test_spacing(self):
-        write(SECTION_0, SECTION_1, SECTION_2, dst=self._filename, spacing=0)
+        sections = (SECTION_0, SECTION_1, SECTION_2)
+        write(sections, dst=self._filename, spacing=0)
         with open(self._filename, "r", encoding="utf-8") as file:
             r = file.read()
         self.assertEqual(TEXT_2, r)

@@ -12,7 +12,7 @@ Render sections, i.e., transform the sequence of sections
 into a Braq text document (string)
 
 ```python
-def render(*sections, spacing=1):
+def render(sections, spacing=1):
     ...
 ```
 

@@ -69,15 +69,18 @@ class TestSectionClass(unittest.TestCase):
 class TestRenderFunction(unittest.TestCase):
 
     def test_with_no_sections(self):
-        r = render()
+        sections = tuple()
+        r = render(sections)
         self.assertEqual("", r)
 
     def test_with_sections(self):
-        r = render(SECTION_0, SECTION_1, SECTION_2)
+        sections = SECTION_0, SECTION_1, SECTION_2
+        r = render(sections)
         self.assertEqual(TEXT_1, r)
 
     def test_spacing(self):
-        r = render(SECTION_0, SECTION_1, SECTION_2, spacing=0)
+        sections = SECTION_0, SECTION_1, SECTION_2
+        r = render(sections, spacing=0)
         self.assertEqual(TEXT_2, r)
 
 

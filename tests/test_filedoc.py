@@ -104,9 +104,8 @@ class TestEmptyFileDoc(unittest.TestCase):
         self._file_doc.embed("section 1", data)
         self._file_doc.set("section 2", "line 1\nline 2")
         with self.subTest():
-            r = FileDoc(self._filename).build_config()
-            expected = {"section 1": data, "section 2": None}
-            self.assertEqual(expected, r)
+            with self.assertRaises(ParadictError):
+                FileDoc(self._filename).build_config()
 
     def test_embed_method(self):
         data = {"name": "alex", "pi": 3.14}
@@ -128,14 +127,16 @@ class TestEmptyFileDoc(unittest.TestCase):
     def test_remove_method(self):
         # 1
         with self.subTest("Test 'remove' method without argument"):
+            headers = tuple()
             try:
-                self._file_doc.remove()
+                self._file_doc.remove(headers)
             except Exception as e:
                 self.assertTrue(False)
         # 2
         with self.subTest("Test 'remove' method with argument"):
+            headers = ("header", )
             try:
-                self._file_doc.remove("header")
+                self._file_doc.remove(headers)
             except Exception as e:
                 self.assertTrue(False)
 
@@ -184,14 +185,8 @@ class TestFileDoc(unittest.TestCase):
             self._file_doc.build("")
 
     def test_build_config_method(self):
-        data = {"name": "alex", "pi": 3.14}
-        err_cache = list()
-        on_error = lambda header, err: err_cache.append((header, err))
-        r = FileDoc(self._filename).build_config(on_error=on_error)
-        expected = {"": None, "section 1": data, "section 2": {"id": 42},
-                    "section 3": {"website": 404}}
-        self.assertEqual(expected, r)
-        self.assertEqual(1, len(err_cache))
+        with self.assertRaises(ParadictError):
+            FileDoc(self._filename).build_config()
 
     def test_embed_method(self):
         data = {"name": "alex", "pi": 0}
@@ -228,13 +223,15 @@ class TestFileDoc(unittest.TestCase):
     def test_remove_method(self):
         # 1
         with self.subTest("Test 'remove' method without argument"):
-            self._file_doc.remove()
+            headers = tuple()
+            self._file_doc.remove(headers)
             r = self._file_doc.list_headers()
             expected = ("", "section 1", "section 2", "section 3")
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Test 'remove' method with argument"):
-            self._file_doc.remove("section 1")
+            headers = ("section 1", )
+            self._file_doc.remove(headers)
             r = FileDoc(self._filename).list_headers()
             expected = ("", "section 2", "section 3")
             self.assertEqual(expected, r)
@@ -280,47 +277,6 @@ class TestFileDocWithComment(unittest.TestCase):
         r = tuple(r.values())
         expected = ("This is a comment !", 3.14)
         self.assertEqual(expected, r)
-
-
-class TestEditModelContextManager(unittest.TestCase):
-
-    def setUp(self):
-        file = tempfile.NamedTemporaryFile(delete=False)
-        file.close()
-        self._filename = file.name
-        self._file_doc = FileDoc(self._filename)
-
-    def tearDown(self):
-        pathlib.Path(self._filename).unlink()
-
-    def test_edit_model_method(self):
-        section_1 = ("section 1", ["line 1", "line 2"])
-        with self.subTest():
-            # set "section 1" inside the edit_model context
-            with self._file_doc.edit_model():
-                self._file_doc.set(*section_1)
-                r = FileDoc(self._filename).get("section 1")
-                self.assertIsNone(r)
-            # at the end of context, check if "section 1" is saved
-            r = FileDoc(self._filename).get("section 1")
-            expected = "line 1\nline 2"
-            self.assertEqual(expected, r)
-
-    def test_edit_model_method_with_autosave_off(self):
-        section_1 = ("section 1", ["line 1", "line 2"])
-        with self.subTest():
-            # set "section 1" inside the edit_model context
-            with self._file_doc.edit_model(autosave=False):
-                self._file_doc.set(*section_1)
-            # at the end of context, check if "section 1" is saved
-            r = FileDoc(self._filename).get("section 1")
-            self.assertIsNone(r)
-            # call .save method then try again
-            self._file_doc.save()
-            r = FileDoc(self._filename).get("section 1")
-            expected = "line 1\nline 2"
-            self.assertEqual(expected, r)
-
 
 
 class TestAutosaveMode(unittest.TestCase):
@@ -492,17 +448,17 @@ class TestFileDocWithSchema(unittest.TestCase):
     def test_validate_method(self):
         # 1
         with self.subTest("Validate the entire doc"):
-            r = self._file_doc.validate()
+            r = self._file_doc.is_valid()
             expected = False
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Validate section 1 and section 2"):
-            r = self._file_doc.validate("section 1", "section 2")
+            r = self._file_doc.is_valid("section 1", "section 2")
             expected = True
             self.assertEqual(expected, r)
         # 3
         with self.subTest("Validate unnamed section and section 3"):
-            r = self._file_doc.validate("", "section 3")
+            r = self._file_doc.is_valid("", "section 3")
             expected = False
             self.assertEqual(expected, r)
 
@@ -527,17 +483,17 @@ class TestFileDocWithEmptySchema(unittest.TestCase):
     def test_validate_method(self):
         # 1
         with self.subTest("Validate the entire doc"):
-            r = self._file_doc.validate()
+            r = self._file_doc.is_valid()
             expected = True
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Validate section 1 and section 2"):
-            r = self._file_doc.validate("section 1", "section 2")
+            r = self._file_doc.is_valid("section 1", "section 2")
             expected = True
             self.assertEqual(expected, r)
         # 3
         with self.subTest("Validate unnamed section and section 3"):
-            r = self._file_doc.validate("", "section 3")
+            r = self._file_doc.is_valid("", "section 3")
             expected = True
             self.assertEqual(expected, r)
 

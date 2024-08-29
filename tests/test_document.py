@@ -4,8 +4,8 @@ import tempfile
 from textwrap import dedent
 from braq.document import Document
 from braq.section import Section
+from braq.errors import ParadictError
 from paradict import box
-from paradict.errors import Error as ParadictError
 
 
 INIT_TEXT = """\
@@ -97,17 +97,11 @@ class TestEmptyDocument(unittest.TestCase):
             expected = {"section 1": data}
             self.assertEqual(expected, r)
         with self.subTest():
-            err_cache = list()
-            on_error = lambda header, err: err_cache.append((header, err))
-            r = self._document.build_config("section 1", "section 2",
-                                            on_error=on_error)
-            expected = {"section 1": data, "section 2": None}
-            self.assertEqual(expected, r)
-            self.assertEqual(1, len(err_cache))
+            with self.assertRaises(ParadictError):
+                self._document.build_config()
         with self.subTest():
-            r = self._document.build_config()
-            expected = {"section 1": data, "section 2": None}
-            self.assertEqual(expected, r)
+            with self.assertRaises(ParadictError):
+                self._document.build_config("section 1", "section 2")
 
     def test_embed_method(self):
         data = {"name": "alex", "pi": 3.14}
@@ -129,14 +123,16 @@ class TestEmptyDocument(unittest.TestCase):
     def test_remove_method(self):
         # 1
         with self.subTest("Test 'remove' method without argument"):
+            headers = tuple()
             try:
-                self._document.remove()
+                self._document.remove(headers)
             except Exception as e:
                 self.assertTrue(False)
         # 2
         with self.subTest("Test 'remove' method with argument"):
+            headers = ("header", )
             try:
-                self._document.remove("header")
+                self._document.remove(headers)
             except Exception as e:
                 self.assertTrue(False)
 
@@ -188,13 +184,8 @@ class TestDocument(unittest.TestCase):
             expected = {"section 1": data, "section 2": {"id": 42}}
             self.assertEqual(expected, r)
         with self.subTest():
-            err_cache = list()
-            on_error = lambda header, err: err_cache.append((header, err))
-            r = self._document.build_config(on_error=on_error)
-            expected = {"": None, "section 1": data, "section 2": {"id": 42},
-                        "section 3": {"website": 404}}
-            self.assertEqual(expected, r)
-            self.assertEqual(1, len(err_cache))
+            with self.assertRaises(ParadictError):
+                self._document.build_config()
 
     def test_embed_method(self):
         data = {"name": "alex", "pi": 0}
@@ -231,13 +222,15 @@ class TestDocument(unittest.TestCase):
     def test_remove_method(self):
         # 1
         with self.subTest("Test 'remove' method without argument"):
-            self._document.remove()
+            headers = tuple()
+            self._document.remove(headers)
             r = self._document.list_headers()
             expected = ("", "section 1", "section 2", "section 3")
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Test 'remove' method with argument"):
-            self._document.remove("section 1")
+            headers = ("section 1", )
+            self._document.remove(headers)
             r = self._document.list_headers()
             expected = ("", "section 2", "section 3")
             self.assertEqual(expected, r)
@@ -329,17 +322,17 @@ class TestDocumentWithSchema(unittest.TestCase):
     def test_validate_method(self):
         # 1
         with self.subTest("Validate the entire doc"):
-            r = self._document.validate()
+            r = self._document.is_valid()
             expected = False
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Validate section 1 and section 2"):
-            r = self._document.validate("section 1", "section 2")
+            r = self._document.is_valid("section 1", "section 2")
             expected = True
             self.assertEqual(expected, r)
         # 3
         with self.subTest("Validate unnamed section and section 3"):
-            r = self._document.validate("", "section 3")
+            r = self._document.is_valid("", "section 3")
             expected = False
             self.assertEqual(expected, r)
 
@@ -364,17 +357,17 @@ class TestDocumentWithEmptySchemaFile(unittest.TestCase):
     def test_validate_method(self):
         # 1
         with self.subTest("Validate the entire doc"):
-            r = self._document.validate()
+            r = self._document.is_valid()
             expected = True
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Validate section 1 and section 2"):
-            r = self._document.validate("section 1", "section 2")
+            r = self._document.is_valid("section 1", "section 2")
             expected = True
             self.assertEqual(expected, r)
         # 3
         with self.subTest("Validate unnamed section and section 3"):
-            r = self._document.validate("", "section 3")
+            r = self._document.is_valid("", "section 3")
             expected = True
             self.assertEqual(expected, r)
 
@@ -400,17 +393,17 @@ class TestDocumentWithSchemaFile(unittest.TestCase):
     def test_validate_method(self):
         # 1
         with self.subTest("Validate the entire doc"):
-            r = self._document.validate()
+            r = self._document.is_valid()
             expected = False
             self.assertEqual(expected, r)
         # 2
         with self.subTest("Validate section 1 and section 2"):
-            r = self._document.validate("section 1", "section 2")
+            r = self._document.is_valid("section 1", "section 2")
             expected = True
             self.assertEqual(expected, r)
         # 3
         with self.subTest("Validate unnamed section and section 3"):
-            r = self._document.validate("", "section 3")
+            r = self._document.is_valid("", "section 3")
             expected = False
             self.assertEqual(expected, r)
 
