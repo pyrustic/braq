@@ -68,20 +68,19 @@ class FileDoc(Document):
         if self._autosave:
             self.save()
 
-    def build(self, header, skip_comments=True):
+    def build(self, header,):
         """
         Decode and return the section whose header is provided
 
         [param]
         - header: the string header of the section
-        - skip_comments: boolean to tell whether comments should be ignored or not
         """
         self._ensure_sections()
-        return super().build(header, skip_comments=skip_comments)
+        return super().build(header)
 
-    def build_config(self, *headers, skip_comments=True):
+    def build_config(self, *headers):
         self._ensure_sections()
-        return super().build_config(*headers, skip_comments=skip_comments)
+        return super().build_config(*headers)
 
     def embed(self, header, body):
         self._ensure_sections()

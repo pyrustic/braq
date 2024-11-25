@@ -162,13 +162,12 @@ class Document:
         self._sections[header] = body.rstrip()
         return body
 
-    def build(self, header, skip_comments=True):
+    def build(self, header):
         """
         Decode and return the section whose header is provided
 
         [param]
         - header: the string header of the section
-        - skip_comments: boolean to tell whether comments should be ignored or not
 
         [return]
         Return the body as a Python dictionary built with Paradict
@@ -177,17 +176,16 @@ class Document:
         if body is None:
             return
         body = decode(body, obj_builder=self._obj_builder,
-                      skip_comments=skip_comments, root_dir=self._root_dir,
+                      root_dir=self._root_dir,
                       type_ref=self._type_ref)
         return body
 
-    def build_config(self, *headers, skip_comments=True):
+    def build_config(self, *headers):
         """Build a configuration dictionary from the document and return it
 
         [param]
         - headers: Headers of sections meant to be part of the config.
         Not providing headers implies that the entire document can be treated as config data
-        - skip_comments: boolean to tell whether comments should be ignored or not
 
         [return]
         Returns a dictionary whose keys are headers and values are dictionaries representing the Paradict-compatible bodies of sections. The value is None when the body failed to be converted into dictionary with Paradict
@@ -195,7 +193,7 @@ class Document:
         headers = headers if headers else self.list_headers()
         config = dict()
         for header in headers:
-            config[header] = self.build(header, skip_comments=skip_comments)
+            config[header] = self.build(header)
         return config
 
     def embed(self, header, body):
@@ -206,7 +204,6 @@ class Document:
             raise errors.Error(msg)
         body = encode(body, mode=self._encoding_mode,
                       type_ref=self._type_ref,
-                      skip_comments=False,
                       root_dir=self._root_dir,
                       bin_to_text=self._bin_to_text,
                       attachments_dir=self._attachments_dir)
@@ -257,7 +254,7 @@ class Document:
         self._schema = dict()
         for header, body in r.items():
             body = decode(body, type_ref=self._type_ref, obj_builder=self._obj_builder,
-                          skip_comments=True, root_dir=self._root_dir)
+                          root_dir=self._root_dir)
             self._schema[header] = body
 
     def is_valid(self, *headers):
@@ -283,7 +280,7 @@ class Document:
         for header in headers:
             if header not in self._schema:
                 continue
-            if not validator.is_valid(self.build(header, skip_comments=True),
+            if not validator.is_valid(self.build(header),
                                       self._schema.get(header)):
                 return False
         return True
@@ -310,7 +307,7 @@ class Document:
         for header in headers:
             if header not in self._schema:
                 continue
-            validator.validate(self.build(header, skip_comments=True),
+            validator.validate(self.build(header),
                                self._schema.get(header))
 
     def load_from(self, path):
