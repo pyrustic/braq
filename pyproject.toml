@@ -12,7 +12,7 @@ authors = [
 maintainers = [
     {name = "Pyrustic Architect", email = "rusticalex@yahoo.com"},
 ]
-license = {file = "LICENSE"}
+license = {text = "MIT License"}
 keywords = [
 ]
 # https://pypi.org/classifiers/ 
