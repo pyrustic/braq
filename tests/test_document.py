@@ -5,7 +5,6 @@ from textwrap import dedent
 from braq.document import Document
 from braq.section import Section
 from braq.errors import ParadictError
-from paradict import box
 
 
 INIT_TEXT = """\
@@ -250,24 +249,9 @@ class TestDocumentWithComment(unittest.TestCase):
         pi = 3.14"""
         self._document = Document(dedent(text))
 
-    def test_build_method_with_default_comments_off(self):
-        r = self._document.build("")  # skip_comments=True
+    def test_build_method(self):
+        r = self._document.build("")
         expected = {"pi": 3.14}
-        self.assertEqual(expected, r)
-
-    def test_build_method_with_comments_on(self):
-        r = self._document.build("", skip_comments=False)
-        r = tuple(r.values())
-        expected = ("this is a comment", 3.14)
-        self.assertEqual(expected, r)
-
-    def test_creating_section_with_comment(self):
-        body = {box.CommentID(): box.Comment("This is a comment !"),
-                "pi": 3.14}
-        self._document.embed("section 1", body)
-        r = self._document.build("section 1", skip_comments=False)
-        r = tuple(r.values())
-        expected = ("This is a comment !", 3.14)
         self.assertEqual(expected, r)
 
 

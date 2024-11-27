@@ -4,7 +4,7 @@
 
 [project]
 name = "braq"
-description = "Customizable data format for config files, AI prompts, and more"
+description = "Section-based human-readable data format"
 readme = "README.md"
 authors = [
     {name = "Pyrustic Architect", email = "rusticalex@yahoo.com"},

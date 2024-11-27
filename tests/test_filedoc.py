@@ -258,25 +258,11 @@ class TestFileDocWithComment(unittest.TestCase):
     def tearDown(self):
         pathlib.Path(self._filename).unlink()
 
-    def test_build_method_with_default_comments_off(self):
-        r = self._file_doc.build("")  # skip_comments=True
+    def test_build_method(self):
+        r = self._file_doc.build("")
         expected = {"pi": 3.14}
         self.assertEqual(expected, r)
 
-    def test_build_method_with_comments_on(self):
-        r = self._file_doc.build("", skip_comments=False)
-        r = tuple(r.values())
-        expected = ("this is a comment", 3.14)
-        self.assertEqual(expected, r)
-
-    def test_creating_section_with_comment(self):
-        body = {box.CommentID(): box.Comment("This is a comment !"),
-                "pi": 3.14}
-        self._file_doc.embed("section 1", body)
-        r = FileDoc(self._filename).build("section 1", skip_comments=False)
-        r = tuple(r.values())
-        expected = ("This is a comment !", 3.14)
-        self.assertEqual(expected, r)
 
 
 class TestAutosaveMode(unittest.TestCase):
