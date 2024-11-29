@@ -1,5 +1,5 @@
 import unittest
-from braq.parser import get_header, check_header, parse_iter, parse
+from braq.parser import get_header, is_header, parse, parse_compact
 
 
 TEXT = """\
@@ -59,15 +59,15 @@ class TestParseFunction(unittest.TestCase):
 
     def test_empty_text(self):
         text = ""
-        r = parse(text)
+        r = parse_compact(text)
         self.assertEqual(dict(), r)
 
     def test_text_with_sections(self):
-        r = parse(TEXT)
+        r = parse_compact(TEXT)
         self.assertEqual(DICT_3, r)
 
     def test_end_of_stream(self):
-        r = parse(TEXT, end_of_stream="line 6")
+        r = parse_compact(TEXT, end_of_stream="line 6")
         self.assertEqual(DICT_4, r)
 
 
@@ -76,11 +76,11 @@ class TestParseIterativelyFunction(unittest.TestCase):
     def test_empty_text(self):
         text = ""
         with self.assertRaises(StopIteration):
-            next(parse_iter(text))
+            next(parse(text))
 
     def test_text_with_sections(self):
         cache = dict()
-        for header, body in parse_iter(TEXT):
+        for header, body in parse(TEXT):
             if header not in cache:
                 cache[header] = list()
             for line in body:
@@ -89,7 +89,7 @@ class TestParseIterativelyFunction(unittest.TestCase):
 
     def test_end_of_stream(self):
         cache = dict()
-        for header, body in parse_iter(TEXT, end_of_stream="line 6"):
+        for header, body in parse(TEXT, end_of_stream="line 6"):
             if header not in cache:
                 cache[header] = list()
             for line in body:
@@ -141,29 +141,29 @@ class TestCheckHeaderFunction(unittest.TestCase):
     def test_with_valid_line(self):
         with self.subTest("line without trailing whitespace"):
             line = "[my header]"
-            r = check_header(line)
+            r = is_header(line)
             self.assertTrue(r)
         with self.subTest("line with trailing whitespace"):
             line = "[my header] "
-            r = check_header(line)
+            r = is_header(line)
             self.assertTrue(r)
 
     def test_with_invalid_line(self):
         with self.subTest():
             line = "[my header]x"
-            r = check_header(line)
+            r = is_header(line)
             self.assertFalse(r)
         with self.subTest():
             line = " [my header]"
-            r = check_header(line)
+            r = is_header(line)
             self.assertFalse(r)
         with self.subTest():
             line = "[my header"
-            r = check_header(line)
+            r = is_header(line)
             self.assertFalse(r)
         with self.subTest():
             line = "my header]"
-            r = check_header(line)
+            r = is_header(line)
             self.assertFalse(r)
 
 

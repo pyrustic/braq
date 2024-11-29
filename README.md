@@ -12,7 +12,7 @@
 
 <!-- Intro Text -->
 # Braq
-<b>Customizable data format for config files, AI prompts, and more</b>
+<b>Section-based human-readable data format</b>
 
 
 ## Table of contents
@@ -20,20 +20,13 @@
 - [Data format specification](#data-format-specification)
 - [Notable use cases](#notable-use-cases)
     - [Config files](#config-files)
-    - [AI prompts](#ai-prompts)
     - [Source code documentation](#source-code-documentation)
-- [Classes for interacting with a document](#classes-for-interacting-with-a-document)
-    - [Base document class](#base-document-class)
-    - [File document class](#file-document-class)
+    - [AI prompts](#ai-prompts)
 - [Section class](#section-class)
 - [Base functions](#base-functions)
     - [Parse a document](#parse-a-document)
     - [Parse a document iteratively](#parse-a-document-iteratively)
-    - [Read a file](#read-a-file)
-    - [Read a file iteratively](#read-a-file-iteratively)
     - [Render a document](#render-a-document)
-    - [Write to file](#write-to-file)
-- [Braq schema for data validation](#braq-schema-for-data-validation)
 - [Misc functions](#misc-functions)
 - [Miscellaneous](#miscellaneous)
 - [Testing and contributing](#testing-and-contributing)
@@ -43,19 +36,7 @@
 # Overview
 **Braq** (pronounced `/ˈbɹæk/`) is a human-readable customizable data format whose reference parser is an eponymous lightweight [Python](https://www.python.org/) library available on [PyPI](#installation).
 
-## Minimal format specification
 A Braq **document** is made up of **sections**, each defined by a **header** surrounded by square brackets (hence the name Braq) and a **body** which is just lines of text.
-
-Since a body is arbitrary text, it is possible to embed a complex [dictionary data structure](https://en.wikipedia.org/wiki/Dictionary_(data_structure)) into a section by encoding it with the human-readable [Paradict](https://github.com/pyrustic/paradict) data format.
-
-Its versatility and minimal format specification make Braq highly customizable and therefore allow it to be used in an eclectic set of use cases such as config files, AI prompts, and code documentation.
-
-## Intuitive programming interface
-The Braq parser offers an intuitive programming interface to smoothly interact with a Braq document as well as a transparent integration with [Paradict](https://github.com/pyrustic/paradict) for embedding and loading complex dictionary data structures.
-
-Braq provides functions for parsing documents line by line, creating document models, rendering documents, and performing file I/O operations, among other functionalities. 
-
-At a higher level, the `Document` class leverages the base functions to model documents and allow seamless interaction with them. This class also serves as the parent class for `FileDoc` that focuses specifically on documents with associated disk files.
 
 <p align="right"><a href="#readme">Back to top</a></p>
 
@@ -122,9 +103,9 @@ This section outlines three notable use cases for **Braq**, namely config files,
 ## Config files
 Being able to embed a dictionary data structure in a section makes Braq de facto suitable for config files.
 
-**Example of a Braq config file:**
+**Example of a KvF config file:**
 ```
-# This is the unnamed section of 'my-config.braq' file.
+# This is the unnamed section of 'my_config.kvf' file.
 # This section will serve as HELP text.
 
 [user]
@@ -136,52 +117,35 @@ theme = 'dark'
 window-size = '1024x420'
 ```
 
-**Using functions to consume and create config files:**
-```python
-from braq import load_config, dump_config
 
-config = load_config("my-config.braq")
+> Check out the config file format [KvF](https://github.com/pyrustic/kvf)
 
-# get the 'user' dict section
-user = config["user"]
 
-# test
-assert user == {"id": 42, "name": "alex"}
+## Source code documentation
+The flexibility of Braq gives the possibility to define custom data formats for specific use cases. Source code documentation is one of those use cases that need Braq with a custom format on top of it.
 
-# embed a 'server' dict section in the config file then dump the config 
-config["server"] = {"ip-address": "127.0.0.1", "port": 80}
-dump_config(config, "my-config.braq")  # persisted
-```
-
-> Note that `load_config` and `dump_config` should be used only when the target 
-> filename is a config file that contains exclusively dict sections.
-> For other files, use the `FileDoc` class
-
-**Using the FileDoc class to consume the config file:**
+This is how Braq can be used to document a function:
 
 ```python
-from braq import FileDoc
-
-confile = FileDoc("my-config.braq")
-
-# build the 'user' dict section
-user = confile.build("user")
-
-# test
-assert user == {"id": 42, "name": "alex"}
-
-# retrieve the unnamed section
-text = confile.get("")  # notice the empty header str
-
-# retrieve the 'user' dict section as a text
-text = confile.get("user")
-
-# embed a 'server' dict section in the config file
-server_conf = {"ip-address": "127.0.0.1", "port": 80}
-confile.embed("server", server_conf)  # change persisted
+def add(a, b):
+    """
+    This function adds together the values of 
+    the provided arguments.
+    
+    [params]
+    - a: first integer
+    - b: second integer
+    
+    [returns]
+    Returns the sum of `a` and `b`
+    """
+    return a + b
 ```
 
-> A schema can be passed to a `FileDoc` instance to validate dict sections.
+> [MikeDoc](https://github.com/pyrustic/mikedoc) is a docstring format for generating API references. The library uses **Braq** to parse [docstrings](https://en.wikipedia.org/wiki/Docstring).
+
+<p align="right"><a href="#readme">Back to top</a></p>
+
 
 ## AI prompts
 The capability to seamlessly interweave human-readable structured data with prose within a single document is a fundamental capability that a language designed to interact with AI must possess.
@@ -246,117 +210,6 @@ https://news.ycombinator.com
         ---
 ```
 
-## Source code documentation
-The flexibility of Braq gives the possibility to define custom data formats for specific use cases. Source code documentation is one of those use cases that need Braq with a custom format on top of it.
-
-This is how Braq can be used to document a function:
-
-```python
-def add(a, b):
-    """
-    This function adds together the values of 
-    the provided arguments.
-    
-    [param]
-    - a: first integer
-    - b: second integer
-    
-    [return]
-    Returns the sum of `a` and `b`
-    """
-    return a + b
-```
-
-> [MikeDoc](https://github.com/pyrustic/mikedoc) is a docstring format for generating API references. The library uses **Braq** to parse [docstrings](https://en.wikipedia.org/wiki/Docstring).
-
-<p align="right"><a href="#readme">Back to top</a></p>
-
-# Classes for interacting with a document
-The library exposes the `Document` and `FileDoc` classes for interacting with documents. In contrary to the `Document` class, `FileDoc` focuses specifically on documents with associated disk files such as **config files**.
-
-## Base document class
-The `Document` class creates an editable model of a Braq document and also offers to validate it with a schema.
-
-**Usage example:**
-
-```python
-from braq import Document
-
-INIT_TEXT = """
-This document contains
-configuration data
-
-[user]
-id = 42
-name = 'alex'
-"""
-
-SCHEMA = {"user": {"id": "int", "name": "str"}}
-
-document = Document(INIT_TEXT, schema=SCHEMA)
-
-# get the body of the unnamed section as a text
-text = document.get("")  # empty header string
-
-# build the 'user' dict section
-user = document.build("user")
-# test
-assert user == {"id": 42, "name": "alex"}
-
-# set a section (here, we are editing the unnamed section)
-document.set("", "line 1\nline 2")
-assert document.get("") == "line 1\nline 2"
-
-# embed a 'server' dict section
-server_conf = {"ip-address": "127.0.0.1", "port": 80}
-document.embed("server", server_conf)
-
-# list headers
-assert document.list_headers() == ("", "user", "server")
-
-# validate specific dict sections
-# (no args implies that the entire doc will be the target)
-document.is_valid("user", "server")  # returns a bool
-# beware, the 'validate' method may raise an exception
-# for good reasons !
-```
-
-> There is more to discover about the `Document` class, such as the `clear`, `remove`, and `render` methods, exposed properties, and more.
-
-
-> Check out the API reference for `braq.Document` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/class-Document.md).
-
-
-## File document class
-The `FileDoc` class is based on the **Document** class and focuses specifically on documents with associated disk files such as **config files**.
-
-> As with the `Document` class, a schema can be passed to a `FileDoc` instance to validate dict sections.
-
-```python
-from braq import FileDoc
-
-confile = FileDoc("config-file.braq")
-
-# build the 'user' section
-user = confile.build("user")
-
-# test
-assert user == {"id": 42, "name": "alex"}
-
-# retrieve the unnamed section as a text
-text = confile.get("")  # notice the empty header str
-
-# retrieve the 'user' dict section as a text
-text = confile.get("user")
-
-# embed a 'server' dict section
-server_conf = {"ip-address": "127.0.0.1", "port": 80}
-confile.embed("server", server_conf)  # change persisted
-```
-
-> There is more to discover about the **FileDoc** class, such as the `load`, `save`, and `save_to` methods, exposed properties, and more.
-
-> Check out the API reference for `braq.FileDoc` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/class-FileDoc.md).
 
 <p align="right"><a href="#readme">Back to top</a></p>
 
@@ -384,7 +237,7 @@ line b"""
 <p align="right"><a href="#readme">Back to top</a></p>
 
 # Base functions
-Base classes such as `Document` and `FileDoc` use several public functions under the hood that can be directly called by the programmer at the right time. These basic functions allow you to parse and render documents as well as read and write file documents.
+Base functions allow you to parse and render documents.
 
 ## Parse a document
 The library exposes the `parse` function which takes as input the text stream to be parsed, then returns a **dictionary** whose keys and values are strings representing headers and bodies respectively.
@@ -402,7 +255,7 @@ the top of this document...
 [section 1]
 this is section 1"""
 
-d = braq.parse(text)
+d = braq.parse_compact(text)
 
 # check headers
 assert tuple(d.keys()) == ("", "section 1")
@@ -424,11 +277,11 @@ this is the unnamed section
 [section 1]
 this is section 1"""
 
-for header, body in braq.parse_iter(text):
-    if header:
-        print("[" + header + "]")
-    for line in body:
-        print(line)
+for header, body in braq.parse(text):
+  if header:
+    print("[" + header + "]")
+  for line in body:
+    print(line)
 ```
 
 Output:
@@ -443,46 +296,6 @@ this is section 1
 
 > Check out the API reference for `braq.parse_iter` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#parse_iter).
 
-## Read a file
-The library exposes the `read` function which takes as input the path to a file to parse, then returns a dictionary whose keys and values are strings representing headers and bodies respectively.
-
-> Sections sharing the same header are concatenated !
-
-```python
-import braq
-
-path = "/home/alex/braqfile.txt"
-
-r = braq.read(path)
-assert tuple(r.keys()) == ("", "section 1")
-```
-
-> Check out the API reference for `braq.read` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#read).
-
-## Read a file iteratively
-A large text file can be parsed line by line as following:
-
-```python
-import braq
-
-path = "/home/alex/braqfile.txt"
-
-for header, body in braq.read_iter(path):
-    if header:
-        print("[" + header + "]")
-    for line in body:
-        print(line)
-```
-Output:
-
-```text
-this is the unnamed section
-
-[section 1]
-this is section 1
-```
-
-> Check out the API reference for `braq.read_iter` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#read_iter).
 
 ## Render a document
 Rendering a document involves transforming Python objects representing sections into Braq text which is a string that can be displayed on the screen or stored in a file.
@@ -524,91 +337,20 @@ line f
 
 > Check out the API reference for `braq.render` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#render).
 
-## Write to file
-Following is a snippet for writting a Braq document to a file:
-
-```python
-import braq
-
-# sections
-section_1 = braq.Section("", "welcome")
-section_2 = braq.Section("section 2")
-section_3 = "section 3", ("line a", "line b")
-
-# path to file
-path = "/home/alex/braqfile.txt"
-# write to file
-sections = (section_1, section_2, section_3)
-r = braq.write(sections, path)
-```
-The contents of the Braq file:
-```text
-welcome
-
-[section 2]
-
-[section 3]
-line a
-line b
-```
-
-
-> Check out the API reference for `braq.write` [here](https://github.com/pyrustic/braq/blob/master/docs/api/modules/braq/__init__/funcs.md#write).
-
 
 <p align="right"><a href="#readme">Back to top</a></p>
 
-# Braq schema for data validation
-Dict sections can be validated against a Braq schema. A Braq schema is a Python dictionary object that can be passed to a `Document` or a `FileDoc`. The keys of this dictionary are the headers of dict sections to validate and the values are [Paradict](https://github.com/pyrustic/paradict) schemas.
-
-A Paradict schema is a dictionary containing specs for data validation.
-
-A spec is either simply a string that represents an expected data type, or a `Spec` object that can contain a checking function for complex validation.
-
-Supported spec strings are: `dict`, `list`, `set`, `obj`, `bin`, `bin`, `bool`, `complex`, `date`, `datetime`, `float`, `grid`, `int`, `str`, `time`
-
-**Example:**
-
-```python
-from paradict.validator import Spec
-from braq import Document
-
-# Braq text with 2 dict sections
-TEXT = """
-[user]
-id = 42
-name = 'alex'
-
-[server]
-ip-address = "127.0.0.1"
-port = 80
-"""
-
-# Associated schema
-SCHEMA = {"user": {"id": "int",
-                   "name": "str"},
-          "server": {"ip-address": "str",
-                     "port": Spec("int", lambda x: 0 < x < 65535)}}
-
-doc = Document(TEXT, schema=SCHEMA)
-assert doc.is_valid()
-# beware, the validate function returns a bool
-# but it can also raises an exception when something is wrong 
-```
-
-
-<p align="right"><a href="#readme">Back to top</a></p>
 
 # Misc functions
-The `check_header` function accepts a line of text as input and then returns a boolean to indicate whether this line is a header or not.
+The `is_header` function accepts a line of text as input and then returns a boolean to indicate whether this line is a header or not.
 
 ```python
 import braq
 
 line_1 = "[my header]"
 line_2 = "[this isn't a header] at all"
-assert braq.check_header(line_1) is True
-assert braq.check_header(line_2) is False
+assert braq.is_header(line_1) is True
+assert braq.is_header(line_2) is False
 ```
 
 The `get_header` function accepts a line of text as input and returns a string if the line is a header. Otherwise, `None` is returned.
@@ -653,7 +395,7 @@ cd braq
 pip install -e .
 
 # run tests
-python -m unittest discover -f -s tests -t .
+python -m tests
 
 # deactivate the virtual environment
 deactivate

@@ -1,15 +1,15 @@
 from braq import misc
 
 
-__all__ = ["parse_iter", "parse", "Parser", "check_header", "get_header"]
+__all__ = ["parse", "parse_compact", "Parser", "is_header", "get_header"]
 
 
-def parse_iter(stream, end_of_stream=None):
+def parse(s, end_of_stream=None):
     """
-    Iteratively parse a stream
+    Iteratively parse a string
 
     [param]
-    - stream: either a text string, UTF-8 binary, a sequence of or an iterator of lines
+    - s: either a text string, or a file-like object that supports .read()
     - end_of_stream: string representing the end of stream
 
     [return]
@@ -19,19 +19,19 @@ def parse_iter(stream, end_of_stream=None):
 
     [usage]
     ```python
-    for header, body in parse_iter(stream):
+    for header, body in parse(stream):
         print(header)  # string
         for line in body:  # iterator
             print(line)
     ```
     """
     parser = Parser(end_of_stream=end_of_stream)
-    yield from parser.parse(stream)
+    yield from parser.parse(s)
 
 
-def parse(stream, end_of_stream=None):
+def parse_compact(s, end_of_stream=None):
     """
-    Parse and flatten a Braq text stream
+    Parse and compact a Braq text stream
 
     [param]
     - stream: either a text string, UTF-8 binary, a sequence of or an iterator of lines
@@ -39,10 +39,10 @@ def parse(stream, end_of_stream=None):
 
     [return]
     Returns the dict of sections (keys are headers and
-    values are section's bodies. a section body is a text string
+    values are section's bodies. A section body is a text string)
     """
     sections = dict()
-    for header, body in parse_iter(stream, end_of_stream=end_of_stream):
+    for header, body in parse(s, end_of_stream=end_of_stream):
         if header not in sections:
             sections[header] = list()
         sections[header].extend(body)
@@ -83,7 +83,7 @@ class Parser:
 
         [usage]
         ```python
-        for header, body in Parser.parse(stream):
+        for header, body in Parser().parse(stream):
             print(header)  # string
             for line in body:  # iterator
                 print(line)
@@ -133,8 +133,9 @@ class Parser:
                 return
 
     def _ensure_stream(self, stream):
-        if isinstance(stream, str):
-            stream = stream.splitlines(keepends=False)
+        if not isinstance(stream, str):
+            stream = stream.read()
+        stream = stream.splitlines(keepends=False)
         return iter(stream)
 
     def _ensure_line(self, line):
@@ -143,7 +144,7 @@ class Parser:
         return line.rstrip("\n")
 
 
-def check_header(line):
+def is_header(line):
     """Return a boolean to tell whether a string is a header line or not"""
     if not line.startswith("["):
         return False
