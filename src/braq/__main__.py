@@ -5,6 +5,7 @@ __all__ = []
 
 
 def main():
+    print("Structured text format with sections")
     print("https://github.com/pyrustic/braq")
 
 

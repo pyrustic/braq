@@ -255,7 +255,7 @@ the top of this document...
 [section 1]
 this is section 1"""
 
-d = braq.parse_compact(text)
+d = braq.decode(text)
 
 # check headers
 assert tuple(d.keys()) == ("", "section 1")

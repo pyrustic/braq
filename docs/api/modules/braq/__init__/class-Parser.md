@@ -24,7 +24,6 @@ Here are methods exposed in the class:
 - [\_\_init\_\_](#__init__)
 - [parse](#parse)
 - [\_ensure\_line](#_ensure_line)
-- [\_ensure\_stream](#_ensure_stream)
 - [\_is\_end\_of\_stream](#_is_end_of_stream)
 - [\_iter\_body](#_iter_body)
 
@@ -63,16 +62,6 @@ No docstring
 
 ```python
 def _ensure_line(self, line):
-    ...
-```
-
-<p align="right"><a href="#braq-api-reference">Back to top</a></p>
-
-## \_ensure\_stream
-No docstring
-
-```python
-def _ensure_stream(self, stream):
     ...
 ```
 

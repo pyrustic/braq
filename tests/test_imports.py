@@ -9,8 +9,8 @@ class TestImports(unittest.TestCase):
             from braq import Section
             from braq import Parser
             # import functions
-            from braq import parse_compact
             from braq import parse
+            from braq import decode
             from braq import render
             from braq import is_header
             from braq import get_header

@@ -15,7 +15,7 @@ Here are properties exposed in the class:
 
 | Property | Methods | Description |
 | --- | --- | --- |
-| body | _getter, setter_ | Body as string |
+| body | _getter, setter_ | No docstring. |
 | header | _getter, setter_ | No docstring. |
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
@@ -23,6 +23,7 @@ Here are properties exposed in the class:
 # Methods within class
 Here are methods exposed in the class:
 - [\_\_init\_\_](#__init__)
+- [render](#render)
 
 ## \_\_init\_\_
 Init
@@ -36,5 +37,15 @@ def __init__(self, header, body=None):
 | --- | --- |
 | header | the header (str) of the section |
 | body | the body of the section, either a string or a list of string (lines) |
+
+<p align="right"><a href="#braq-api-reference">Back to top</a></p>
+
+## render
+No docstring
+
+```python
+def render(self, index=0):
+    ...
+```
 
 <p align="right"><a href="#braq-api-reference">Back to top</a></p>
